@@ -4,17 +4,26 @@ from rest_framework.views import APIView
 from rest_framework import permissions, status
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import F
-from user.serializers import UserSerializer, ProfileSerializer, HobbySerializer
+from user.serializers import UserSerializer, ProfileSerializer, HobbySerializer, SignupSerializer
+from user.models import User, Profile, Hobby
+# from prac.permissions import TOUser
 
 
 class UserView(APIView): # CBV 방식
+    # permission_classes = [TOUser]
     permission_classes = [permissions.AllowAny] # 누구나 view 조회 가능
     # permission_classes = [permissions.IsAdminUser] # admin만 view 조회 가능
     # permission_classes = [permissions.IsAuthenticated] # 로그인 된 사용자만 view 조회 가능
 
     def get(self, request):
-        user = request.user # 로그인한 사용자를 user에 담는다.
-        return Response(UserSerializer(user).data)
+        # 로그인한 사용자를 user에 담는다
+        user = request.user
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+        
+        # # 모든 사용자를 리턴
+        # all_user = User.objects.all()
+        # return Response(UserSerializer(all_user, many=True).data, status=status.HTTP_200_OK)
+        
         
         # # 역참조를 사용한 경우
         # profile = user.profile
@@ -39,7 +48,16 @@ class UserView(APIView): # CBV 방식
         
         
     def post(self, request):
-        return Response({'message': 'post method!!'})
+        serializer = SignupSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"가입완료"})
+        else:
+            print(serializer.errors)
+            return Response({"가입실패"})
+            
+            
+        # return Response({'message': 'post method!!'}) v 
 
     def put(self, request):
         return Response({'message': 'put method!!'})

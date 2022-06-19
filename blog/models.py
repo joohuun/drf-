@@ -1,4 +1,5 @@
 from django.db import models
+from user.models import User
 
 # Create your models here.
 class Category(models.Model):
@@ -18,5 +19,12 @@ class Article(models.Model):
         return f"{self.user.username} 님이 작성하신 글입니다."
 
 
-# class Comment(models.Model):
+class Comment(models.Model):
+    user = models.ForeignKey('user.User', verbose_name="작성자", on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, verbose_name="작성자", on_delete=models.CASCADE)
+    contents = models.TextField()
+    
+    def __str__(self):
+        return f"{self.articel.title} / {self.contents}"
+    
     
