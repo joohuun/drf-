@@ -1,5 +1,4 @@
 from django.db import models
-from user.models import User
 
 # Create your models here.
 class Category(models.Model):
@@ -14,9 +13,12 @@ class Article(models.Model):
     title = models.CharField("제목", max_length=50)
     category = models.ManyToManyField(Category, verbose_name="카테고리")
     contents = models.TextField("본문")
+    start_date = models.DateTimeField("노출 시작일", auto_now_add=True)
+    end_date = models.DateTimeField("노출 종료일", null=True, blank=True)
     
     def __str__(self):
-        return f"{self.user.username} 님이 작성하신 글입니다."
+        return f"{self.title} / {self.user.username} / " + str(self.start_date)
+    
 
 
 class Comment(models.Model):
@@ -25,6 +27,6 @@ class Comment(models.Model):
     contents = models.TextField()
     
     def __str__(self):
-        return f"{self.articel.title} / {self.contents}"
+        return f"{self.article.title} / {self.contents}"
     
     

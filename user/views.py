@@ -17,8 +17,11 @@ class UserView(APIView): # CBV 방식
 
     def get(self, request):
         # 로그인한 사용자를 user에 담는다
-        user = request.user
-        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+        # user = request.user
+        # return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+        
+        user = UserSerializer(request.user, context={"request": request}).data
+        return Response(user, status=status.HTTP_200_OK)
         
         # # 모든 사용자를 리턴
         # all_user = User.objects.all()
@@ -45,8 +48,7 @@ class UserView(APIView): # CBV 방식
         # # 역참조를 사용하지 않았을 경우
         # profile = Profile.objects.get(user=user)
         # hobbys = user.profile.hobby.all()
-        
-        
+               
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():

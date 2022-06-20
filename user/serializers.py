@@ -1,5 +1,4 @@
-import profile
-from numpy import source
+from matplotlib.style import context
 from rest_framework import serializers
 from user.models import User, Profile, Hobby
 from blog.serializers import ArticleSerializer, CommentSerializer
@@ -11,11 +10,14 @@ class HobbySerializer(serializers.ModelSerializer):
         # print(type(obj))
         # print(dir(obj))
         # print(obj)
+        user = self.context["request"].user
+        print(user)
+        
         user_list = []
-        for profile in obj.hobby.exclude(id=1).all():
+        for profile in obj.hobby.exclude(user=user):
             user_list.append(profile.user.username)       
         return user_list
-        # return [profile.user.username for profile in obj.hobby.exclude(id=1).all()]    
+        # return [profile.user.username for profile in obj.hobby.all()]    
         
     class Meta:
         model = Hobby
@@ -37,9 +39,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["username", "password", "fullname", "email", "profile", "articles", "comments"]
         # fields = "__all__"
+       
         
-    
-    
 class SignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
