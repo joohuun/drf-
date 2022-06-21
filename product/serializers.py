@@ -7,8 +7,8 @@ from .models import Product
 class ProductSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
-        if '제목' not in data['name']:
-            raise ValidationError('제목이 들어가야 합니다')
+        if '@' not in data['name']:
+            raise ValidationError('@가 들어가야 합니다')
         print(data)
         return data
     
