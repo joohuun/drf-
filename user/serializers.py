@@ -39,6 +39,15 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["username", "password", "fullname", "email", "profile", "articles", "comments"]
         # fields = "__all__"
+        extra_kwargs = {
+            "password":{'write_only':True},
+            "email":{
+                'error_messages':{
+                    'required': '이메일을 입력해주세요',
+                    'invalid':'알맞은 형식의 이메일을 입력해주세요',
+                }
+            }
+        }
        
         
 class SignupSerializer(serializers.ModelSerializer):

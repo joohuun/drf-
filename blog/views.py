@@ -1,8 +1,9 @@
 
 from rest_framework.views import APIView
-from rest_framework import permissions, status
+from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
 from blog.models import Article, Comment
+from blog.serializers import CommentSerializer
 from user.models import User
 from prac.permissions import TOUser
 from datetime import datetime, timedelta, date
@@ -46,26 +47,33 @@ class ArticleView(APIView):
             contents=contents
         )
         article.save()
-        article.category.add(*categorys)
+        article.category.add(*categorys) # 매니투매니관계일떄 add 사용
         return Response({"작성완료"}, status=status.HTTP_200_OK)
 
 
 
-class CommentsView(APIView):
-    permission_classes = [TOUser]
+# class CommentsView(APIView):
+#     permission_classes = [TOUser]
+          
     
-    def post(self, request):
-        user = request.user
-        contents = request.data.get("contents", "")
-        article = Article.objects.get(id=id)
+#     def post(self, request):
+#         user = request.user
+#         contents = request.data.get("contents", "")
+#         article = Article.objects.get(id=id)
         
-        comment = Comment(
-            user=user,
-            contents=contents,
-            article=article
-        )
-        comment.save()
-        return Response({"댓글작성"}, status=status.HTTP_200_OK)
+#         comment = Comment(
+#             user=user,
+#             contents=contents,
+#             article=article
+#         )
+#         comment.save()
+#         return Response({"댓글작성"}, status=status.HTTP_200_OK)
                 
     
+class CommentsView(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save(user = self.request.user)
 

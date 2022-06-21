@@ -4,17 +4,18 @@ from rest_framework.views import APIView
 from rest_framework import permissions, status
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import F
-from user.serializers import UserSerializer, ProfileSerializer, HobbySerializer, SignupSerializer
+from user.serializers import SignupSerializer, UserSerializer, ProfileSerializer, HobbySerializer
 from user.models import User, Profile, Hobby
 # from prac.permissions import TOUser
 
-
+# 유저인증
 class UserView(APIView): # CBV 방식
     # permission_classes = [TOUser]
     permission_classes = [permissions.AllowAny] # 누구나 view 조회 가능
     # permission_classes = [permissions.IsAdminUser] # admin만 view 조회 가능
     # permission_classes = [permissions.IsAuthenticated] # 로그인 된 사용자만 view 조회 가능
-
+    
+    # 사용자 정보 조회
     def get(self, request):
         # 로그인한 사용자를 user에 담는다
         # user = request.user
@@ -42,26 +43,27 @@ class UserView(APIView): # CBV 방식
         #     hobby_members = list(hobby_members)
         #     print(f"hobby : {hobby.name} / hobby members : {hobby_members}")
         #     # 허비맴버 = 허비모델.프로필모델(related_name=hobby).포함(유저만포함,관리제x).필드이름을 F(유저모델__유저네임)으로변경.리스트
-        #     # 결과적으로 관리자를 제외한 유저이름을 리스트로 출력, 하비모델은 프로필모델을 정참조하고 프로필모델은 하비모델를 역참조
+        #     # 결과적으로 관리자를 제외한 유저이름을 리스트로 출력
         #     # 취미가 공통된 유저를 불러온다.  하비모델.프로필모델_SET.exclude().~~~~~
            
         # # 역참조를 사용하지 않았을 경우
         # profile = Profile.objects.get(user=user)
         # hobbys = user.profile.hobby.all()
-               
+    
+    # 회원가입           
     def post(self, request):
-        serializer = SignupSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"가입완료"})
+        signup_serializer = SignupSerializer(data=request.data)
+        if signup_serializer.is_valid():
+            signup_serializer.save()
+            return Response({"가입완료"}, status=status.HTTP_200_OK)
         else:
-            print(serializer.errors)
-            return Response({"가입실패"})
+            print(signup_serializer.errors)
+            return Response({"가입실패"}, status=status.HTTP_400_BAD_REQUEST)
             
             
-        # return Response({'message': 'post method!!'}) v 
 
-    def put(self, request):
+    def put(self, request, obj_id):
+        user = User.objects.get()
         return Response({'message': 'put method!!'})
 
     def delete(self, request):
