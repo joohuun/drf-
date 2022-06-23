@@ -4,10 +4,11 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
 from prac.permissions import TOUser
 from product.serializers import ProductSerializer
-from .models import Product
+from .models import Product, Review
 from datetime import datetime
 from django.db.models import Q
 from rest_framework.views import APIView
+from django.db.models import Avg
 
 
 # APIView 사용
@@ -60,7 +61,15 @@ class ProductView(APIView):
 #         serializer.save(user=self.request.user)
 
 
+class ReviewView(APIView):
     
-    
-        
-        
+    def get(self, request):
+        latest = Review.objects.get().
+        reviews = Review.objects.all().aggregate(Avg('rate'))
+        return reviews
+
+    # def post(self, request):
+    #     return         
+
+    # def put(self, request):
+    #     return     

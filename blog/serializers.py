@@ -9,8 +9,8 @@ class CategorySerializer(serializers.ModelSerializer):
         
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
     
+    user = serializers.SerializerMethodField()    
     def get_user(self, obj):
         return obj.user.username
     
@@ -20,9 +20,9 @@ class CommentSerializer(serializers.ModelSerializer):
         
 
 class ArticleSerializer(serializers.ModelSerializer):
-    category = serializers.SerializerMethodField()
-    comments = CommentSerializer(many=True, source="comment_set", read_only=True)    
     
+    comments = CommentSerializer(many=True, source="comment_set", read_only=True)    
+    category = serializers.SerializerMethodField()
     def get_category(self, obj):
         # print(obj)
         # article_list = []
